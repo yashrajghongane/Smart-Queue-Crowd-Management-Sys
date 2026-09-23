@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>SmartQueue — Your Token</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+
+  <!-- ── Header ── -->
+  <header class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-md mx-auto px-4 py-4 flex items-center gap-3">
+      <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-gray-900 leading-tight">SmartQueue</h1>
+        <p class="text-xs text-gray-500">Your Token Status</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="max-w-md mx-auto px-4 py-8">
+
+    <!-- Error banner (hidden by default) -->
+    <div id="error-banner"
+         class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-5">
+    </div>
+
+    <!-- Loading spinner -->
+    <div id="loading" class="flex flex-col items-center justify-center py-16 gap-4">
+      <svg class="animate-spin w-10 h-10 text-indigo-500" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      <p class="text-gray-500 text-sm">Loading your token status…</p>
+    </div>
+
+    <!-- Status content (hidden until data loads) -->
+    <div id="status-content" class="hidden space-y-5">
+
+      <!-- Token card -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Your Token Number</p>
+        <div id="token-number"
+             class="text-5xl font-extrabold text-indigo-600 tracking-tight mb-3">
+          —
+        </div>
+        <span id="token-state" class="inline-block px-3 py-1 rounded-full text-sm font-semibold">
+          —
+        </span>
+      </div>
+
+      <!-- State message -->
+      <div id="state-message" class="rounded-xl p-4 border text-sm">
+      </div>
+
+      <!-- Queue position -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div id="patients-ahead-section" class="mb-4">
+          <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Patients Ahead of You</p>
+          <div id="patients-ahead" class="text-2xl font-bold text-gray-800">—</div>
+        </div>
+        <div id="serving-token-section">
+          <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Currently Serving</p>
+          <div id="serving-token" class="text-lg font-semibold text-gray-700">—</div>
+        </div>
+      </div>
+
+      <!-- Auto-refresh note + manual refresh -->
+      <div class="flex items-center justify-between gap-3">
+        <p class="text-xs text-gray-400">
+          Updated: <span id="last-updated">—</span>
+          &nbsp;·&nbsp; Auto-refreshes every 10 s
+        </p>
+        <button
+          id="refresh-btn"
+          class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg
+                 font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Refresh Now
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Register new (shown on fatal error) -->
+    <div class="mt-8 text-center">
+      <button id="register-new-btn"
+              class="hidden text-sm text-indigo-600 underline hover:text-indigo-800">
+        ← Register again
+      </button>
+    </div>
+
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/status.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>SmartQueue — Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Prevent layout flash while Tailwind CDN loads */
+    body { font-family: system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+
+  <!-- ── Header ── -->
+  <header class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-md mx-auto px-4 py-4 flex items-center gap-3">
+      <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-gray-900 leading-tight">SmartQueue</h1>
+        <p class="text-xs text-gray-500">Patient Registration</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="max-w-md mx-auto px-4 py-8">
+
+    <!-- Hero text -->
+    <div class="mb-7 text-center">
+      <h2 class="text-2xl font-bold text-gray-900">Get Your Queue Token</h2>
+      <p class="mt-2 text-sm text-gray-500">
+        Register below to receive your token number and track your position in the queue.
+      </p>
+    </div>
+
+    <!-- Registration form -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <form id="registration-form" novalidate>
+
+        <!-- Full name -->
+        <div class="mb-5">
+          <label for="full-name" class="block text-sm font-medium text-gray-700 mb-1.5">
+            Full Name <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="full-name"
+            name="full_name"
+            autocomplete="name"
+            placeholder="e.g. Asha Patil"
+            required
+            class="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                   text-base transition"
+          />
+        </div>
+
+        <!-- Mobile number -->
+        <div class="mb-5">
+          <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1.5">
+            Mobile Number <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="tel"
+            id="mobile"
+            name="mobile"
+            autocomplete="tel"
+            placeholder="e.g. 9876543210"
+            required
+            inputmode="numeric"
+            class="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                   text-base transition"
+          />
+        </div>
+
+        <!-- Department -->
+        <div class="mb-7">
+          <label for="department" class="block text-sm font-medium text-gray-700 mb-1.5">
+            Department <span class="text-red-500">*</span>
+          </label>
+          <select
+            id="department"
+            name="department_id"
+            required
+            class="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                   text-base bg-white transition appearance-none"
+          >
+            <option value="">Select department…</option>
+            <!-- Seed data — matches seed.py DEPT_GM_ID -->
+            <option value="2a2f8a0d-7b46-4a9d-b7f2-6c5f3b9d1001">General Medicine</option>
+          </select>
+          <p class="mt-1 text-xs text-gray-400">
+            Not sure which department? Ask the reception staff.
+          </p>
+        </div>
+
+        <!-- Status message (hidden by default) -->
+        <div id="status-message" class="hidden mb-4"></div>
+
+        <!-- Loading indicator -->
+        <div id="loading" class="hidden flex items-center justify-center gap-2 text-indigo-600 text-sm mb-3">
+          <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Processing…
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
+                 py-3.5 px-6 rounded-xl text-base transition focus:outline-none
+                 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Get My Token
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Footer note -->
+    <p class="mt-6 text-center text-xs text-gray-400">
+      Already registered? Your token will appear on the status page.
+    </p>
+
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>
