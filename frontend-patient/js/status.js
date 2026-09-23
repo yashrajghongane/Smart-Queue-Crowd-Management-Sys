@@ -42,33 +42,38 @@
   const STATE_CONFIG = {
     WAITING: {
       label:   "Waiting",
-      message: "Please wait — we'll call your number soon.",
-      color:   "text-yellow-700 bg-yellow-50 border-yellow-200",
-      badge:   "bg-yellow-100 text-yellow-800",
+      message: "Please take a seat. We'll call your number soon.",
+      color:   "text-amber-700 bg-amber-50 border-amber-200",
+      badge:   "bg-amber-100 text-amber-800",
+      icon:    `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     },
     SERVING: {
-      label:   "Now Serving!",
-      message: "Your turn! Please proceed to the counter / consultation room.",
-      color:   "text-green-700 bg-green-50 border-green-200",
-      badge:   "bg-green-100 text-green-800",
+      label:   "Now Serving",
+      message: "It's your turn! Please proceed to the consultation room.",
+      color:   "text-emerald-700 bg-emerald-50 border-emerald-200",
+      badge:   "bg-emerald-100 text-emerald-800",
+      icon:    `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     },
     HOLD: {
       label:   "On Hold",
-      message: "Your token is temporarily on hold. Please wait for staff to call you.",
+      message: "Your token is temporarily on hold. Staff will assist you shortly.",
       color:   "text-blue-700 bg-blue-50 border-blue-200",
       badge:   "bg-blue-100 text-blue-800",
+      icon:    `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     },
     SKIPPED: {
       label:   "Skipped",
-      message: "Your token was marked as skipped. Please speak to the reception staff.",
-      color:   "text-orange-700 bg-orange-50 border-orange-200",
-      badge:   "bg-orange-100 text-orange-800",
+      message: "Your token was marked as skipped. Please speak to the reception.",
+      color:   "text-rose-700 bg-rose-50 border-rose-200",
+      badge:   "bg-rose-100 text-rose-800",
+      icon:    `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     },
     COMPLETED: {
       label:   "Completed",
-      message: "Your visit is complete. Thank you!",
-      color:   "text-gray-700 bg-gray-50 border-gray-200",
-      badge:   "bg-gray-100 text-gray-700",
+      message: "Your visit is complete. Wishing you good health!",
+      color:   "text-slate-700 bg-slate-100 border-slate-300",
+      badge:   "bg-slate-200 text-slate-700",
+      icon:    `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
     },
   };
 
@@ -117,8 +122,9 @@
     const cfg = STATE_CONFIG[data.state] || {
       label:   data.state,
       message: "",
-      color:   "text-gray-700 bg-gray-50 border-gray-200",
-      badge:   "bg-gray-100 text-gray-700",
+      color:   "text-slate-700 bg-slate-50 border-slate-200",
+      badge:   "bg-slate-100 text-slate-700",
+      icon:    ""
     };
 
     // Token number
@@ -126,21 +132,21 @@
 
     // State badge
     stateEl.textContent  = cfg.label;
-    stateEl.className    = `inline-block px-3 py-1 rounded-full text-sm font-semibold ${cfg.badge}`;
+    stateEl.className    = `inline-block px-4 py-1.5 rounded-full text-base font-bold uppercase tracking-wide shadow-sm ${cfg.badge}`;
 
     // Message box
-    stateMessageEl.textContent = cfg.message;
-    stateMessageEl.className   = `rounded-lg p-4 border text-sm ${cfg.color}`;
+    stateMessageEl.innerHTML = `${cfg.icon} <span>${cfg.message}</span>`;
+    stateMessageEl.className   = `rounded-2xl p-5 border text-base font-medium text-center shadow-sm flex items-center justify-center gap-2 ${cfg.color}`;
 
     // Patients ahead
     if (data.state === "WAITING") {
       patientsAheadEl.parentElement.classList.remove("hidden");
       if (data.patients_ahead === 0) {
         patientsAheadEl.textContent = "You're next!";
-        patientsAheadEl.className = "text-2xl font-bold text-green-600";
+        patientsAheadEl.className = "text-3xl font-extrabold text-emerald-600";
       } else {
         patientsAheadEl.textContent = data.patients_ahead;
-        patientsAheadEl.className = "text-2xl font-bold text-gray-800";
+        patientsAheadEl.className = "text-4xl font-extrabold text-slate-800";
       }
     } else {
       patientsAheadEl.parentElement.classList.add("hidden");
@@ -155,7 +161,7 @@
     }
 
     // Last updated
-    lastUpdatedEl.textContent = new Date(data.updated_at).toLocaleTimeString();
+    lastUpdatedEl.textContent = new Date(data.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
 
     // Show content, hide loading
     loadingEl.classList.add("hidden");
@@ -163,9 +169,9 @@
 
     // Disable auto-refresh button for terminal states
     if (isTerminal) {
-      refreshBtn.textContent = "Visit Complete";
+      refreshBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Visit Complete`;
       refreshBtn.disabled = true;
-      refreshBtn.className = refreshBtn.className.replace("bg-indigo-600 hover:bg-indigo-700", "bg-gray-400 cursor-not-allowed");
+      refreshBtn.className = "w-full sm:w-auto text-sm bg-slate-100 border border-slate-200 text-slate-400 px-5 py-2.5 rounded-xl font-bold cursor-not-allowed flex items-center justify-center gap-2";
     }
   }
 
@@ -184,7 +190,7 @@
 
   // ── Error handling ──────────────────────────────────────────────────────────
   function showError(message, fatal) {
-    errorBannerEl.textContent = message;
+    errorBannerEl.querySelector("span").textContent = message;
     errorBannerEl.classList.remove("hidden");
     if (fatal) {
       stopPolling();
