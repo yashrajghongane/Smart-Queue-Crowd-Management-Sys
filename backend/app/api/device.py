@@ -1,16 +1,7 @@
-"""
-app/api/device.py
-
-ESP32 device event ingestion route. Doc A §2.11.
-CURRENT STATUS: Deferred — hardware integration is a later milestone.
-
-The route stub is present so the API shape is correct from the start.
-"""
 from fastapi import APIRouter, HTTPException
 from app.schemas.schemas import DeviceEventRequest, DeviceEventResponse
 
 router = APIRouter()
-
 
 @router.post(
     "/events",
