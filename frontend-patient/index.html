@@ -10,20 +10,20 @@
     body { font-family: system-ui, -apple-system, sans-serif; }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+<body class="min-h-screen bg-slate-50 text-slate-900">
 
   <!-- ── Header ── -->
-  <header class="bg-white border-b border-gray-200 shadow-sm">
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
     <div class="max-w-md mx-auto px-4 py-4 flex items-center gap-3">
-      <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       </div>
       <div>
-        <h1 class="text-lg font-bold text-gray-900 leading-tight">SmartQueue</h1>
-        <p class="text-xs text-gray-500">Patient Registration</p>
+        <h1 class="text-xl font-bold text-slate-900 leading-tight">City Hospital</h1>
+        <p class="text-sm text-slate-500 font-medium">Digital Queue System</p>
       </div>
     </div>
   </header>
@@ -32,102 +32,130 @@
   <main class="max-w-md mx-auto px-4 py-8">
 
     <!-- Hero text -->
-    <div class="mb-7 text-center">
-      <h2 class="text-2xl font-bold text-gray-900">Get Your Queue Token</h2>
-      <p class="mt-2 text-sm text-gray-500">
-        Register below to receive your token number and track your position in the queue.
+    <div class="mb-8">
+      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Register for Token</h2>
+      <p class="mt-2 text-base text-slate-600">
+        Please fill out this form to get your queue token and check your waiting time.
       </p>
     </div>
 
     <!-- Registration form -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <form id="registration-form" novalidate>
+    <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+      <div class="p-6">
+        <form id="registration-form" novalidate>
 
-        <!-- Full name -->
-        <div class="mb-5">
-          <label for="full-name" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Full Name <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="full-name"
-            name="full_name"
-            autocomplete="name"
-            placeholder="e.g. Asha Patil"
-            required
-            class="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                   text-base transition"
-          />
-        </div>
+          <!-- Full name -->
+          <div class="mb-6">
+            <div class="flex justify-between items-baseline mb-2">
+              <label for="full-name" class="block text-base font-semibold text-slate-800">
+                Full Name
+              </label>
+              <span class="text-xs font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded">Required</span>
+            </div>
+            <input
+              type="text"
+              id="full-name"
+              name="full_name"
+              autocomplete="name"
+              placeholder="e.g. Asha Patil"
+              required
+              class="w-full px-4 py-4 rounded-xl border border-slate-300 text-slate-900 placeholder-slate-400
+                     focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                     text-lg transition shadow-sm"
+              aria-describedby="name-error"
+            />
+            <p id="name-error" class="text-sm text-red-600 mt-2 hidden font-medium flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span></span>
+            </p>
+          </div>
 
-        <!-- Mobile number -->
-        <div class="mb-5">
-          <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Mobile Number <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="tel"
-            id="mobile"
-            name="mobile"
-            autocomplete="tel"
-            placeholder="e.g. 9876543210"
-            required
-            inputmode="numeric"
-            class="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                   text-base transition"
-          />
-        </div>
+          <!-- Mobile number -->
+          <div class="mb-6">
+            <div class="flex justify-between items-baseline mb-2">
+              <label for="mobile" class="block text-base font-semibold text-slate-800">
+                Mobile Number
+              </label>
+              <span class="text-xs font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded">Required</span>
+            </div>
+            <input
+              type="tel"
+              id="mobile"
+              name="mobile"
+              autocomplete="tel"
+              placeholder="e.g. 9876543210"
+              required
+              inputmode="numeric"
+              class="w-full px-4 py-4 rounded-xl border border-slate-300 text-slate-900 placeholder-slate-400
+                     focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                     text-lg transition shadow-sm"
+              aria-describedby="mobile-error"
+            />
+            <p id="mobile-error" class="text-sm text-red-600 mt-2 hidden font-medium flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span></span>
+            </p>
+          </div>
 
-        <!-- Department -->
-        <div class="mb-7">
-          <label for="department" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Department <span class="text-red-500">*</span>
-          </label>
-          <select
-            id="department"
-            name="department_id"
-            required
-            class="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                   text-base bg-white transition appearance-none"
+          <!-- Department -->
+          <div class="mb-8">
+            <div class="flex justify-between items-baseline mb-2">
+              <label for="department" class="block text-base font-semibold text-slate-800">
+                Department
+              </label>
+              <span class="text-xs font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded">Required</span>
+            </div>
+            <div class="relative">
+              <select
+                id="department"
+                name="department_id"
+                required
+                class="w-full px-4 py-4 rounded-xl border border-slate-300 text-slate-900
+                       focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                       text-lg bg-white transition appearance-none shadow-sm"
+                aria-describedby="department-error"
+              >
+                <option value="">Select department…</option>
+                <!-- Seed data — matches seed.py DEPT_GM_ID -->
+                <option value="2a2f8a0d-7b46-4a9d-b7f2-6c5f3b9d1001">General Medicine</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
+            <p id="department-error" class="text-sm text-red-600 mt-2 hidden font-medium flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span></span>
+            </p>
+            <p class="mt-2 text-sm text-slate-500 flex items-start gap-1">
+              <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Not sure which department? Ask the reception staff.
+            </p>
+          </div>
+
+          <!-- Status message (hidden by default) -->
+          <div id="status-message" class="hidden mb-6 flex items-start gap-3 rounded-xl p-4 border text-base shadow-sm"></div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            id="submit-btn"
+            class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold
+                   py-4 px-6 rounded-xl text-lg transition-all focus:outline-none
+                   focus:ring-4 focus:ring-blue-500/50 shadow-md flex items-center justify-center gap-2
+                   disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
           >
-            <option value="">Select department…</option>
-            <!-- Seed data — matches seed.py DEPT_GM_ID -->
-            <option value="2a2f8a0d-7b46-4a9d-b7f2-6c5f3b9d1001">General Medicine</option>
-          </select>
-          <p class="mt-1 text-xs text-gray-400">
-            Not sure which department? Ask the reception staff.
-          </p>
-        </div>
+            <span>Get My Token</span>
+            <svg class="w-5 h-5 hidden" id="submit-spinner" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+          </button>
 
-        <!-- Status message (hidden by default) -->
-        <div id="status-message" class="hidden mb-4"></div>
-
-        <!-- Loading indicator -->
-        <div id="loading" class="hidden flex items-center justify-center gap-2 text-indigo-600 text-sm mb-3">
-          <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-          </svg>
-          Processing…
-        </div>
-
-        <!-- Submit -->
-        <button
-          type="submit"
-          id="submit-btn"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
-                 py-3.5 px-6 rounded-xl text-base transition focus:outline-none
-                 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          Get My Token
-        </button>
-
-      </form>
+        </form>
+      </div>
     </div>
 
     <!-- Footer note -->

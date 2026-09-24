@@ -22,39 +22,63 @@
   const mobileInput = document.getElementById("mobile");
   const deptSelect = document.getElementById("department");
   const submitBtn  = document.getElementById("submit-btn");
+  const submitBtnSpan = submitBtn.querySelector("span");
+  const submitSpinner = document.getElementById("submit-spinner");
   const statusMsg  = document.getElementById("status-message");
-  const loadingEl  = document.getElementById("loading");
+
+  const nameError = document.getElementById("name-error");
+  const mobileError = document.getElementById("mobile-error");
+  const deptError = document.getElementById("department-error");
 
   // ── State ───────────────────────────────────────────────────────────────────
   let isSubmitting = false;
 
   // ── Utilities ───────────────────────────────────────────────────────────────
+  const ICON_ERROR = `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+  const ICON_INFO = `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+
   function showMessage(text, type) {
     // type: "error" | "info" | "success"
-    statusMsg.textContent = text;
-    statusMsg.className = "rounded-lg p-4 text-sm mt-4 " + {
-      error:   "bg-red-50 text-red-800 border border-red-200",
-      info:    "bg-blue-50 text-blue-800 border border-blue-200",
-      success: "bg-green-50 text-green-800 border border-green-200",
+    let icon = type === 'info' ? ICON_INFO : ICON_ERROR;
+    statusMsg.innerHTML = `${icon} <span>${text}</span>`;
+    statusMsg.className = "mb-6 flex items-start gap-3 rounded-xl p-4 border text-base shadow-sm font-medium " + {
+      error:   "bg-red-50 text-red-700 border-red-200",
+      info:    "bg-blue-50 text-blue-700 border-blue-200",
+      success: "bg-green-50 text-green-700 border-green-200",
     }[type];
     statusMsg.classList.remove("hidden");
   }
 
   function clearMessage() {
-    statusMsg.textContent = "";
+    statusMsg.innerHTML = "";
     statusMsg.classList.add("hidden");
+  }
+
+  function showFieldError(el, input, message) {
+    el.querySelector("span").textContent = message;
+    el.classList.remove("hidden");
+    input.classList.add("border-red-300", "focus:ring-red-500");
+    input.classList.remove("border-slate-300", "focus:ring-blue-600");
+  }
+
+  function clearFieldErrors() {
+    [nameError, mobileError, deptError].forEach(el => el.classList.add("hidden"));
+    [nameInput, mobileInput, deptSelect].forEach(input => {
+      input.classList.remove("border-red-300", "focus:ring-red-500");
+      input.classList.add("border-slate-300", "focus:ring-blue-600");
+    });
   }
 
   function setLoading(state) {
     isSubmitting = state;
     if (state) {
-      loadingEl.classList.remove("hidden");
       submitBtn.disabled = true;
-      submitBtn.textContent = "Registering…";
+      submitBtnSpan.textContent = "Processing…";
+      submitSpinner.classList.remove("hidden");
     } else {
-      loadingEl.classList.add("hidden");
       submitBtn.disabled = false;
-      submitBtn.textContent = "Get My Token";
+      submitBtnSpan.textContent = "Get My Token";
+      submitSpinner.classList.add("hidden");
     }
   }
 
@@ -63,22 +87,29 @@
     const mobile = mobileInput.value.trim();
     const dept   = deptSelect.value;
 
+    let isValid = true;
+    clearFieldErrors();
+
     if (!name) {
-      showMessage("Please enter your full name.", "error");
-      nameInput.focus();
-      return false;
+      showFieldError(nameError, nameInput, "Please enter your full name");
+      if(isValid) nameInput.focus();
+      isValid = false;
     }
     if (!/^\d{7,15}$/.test(mobile.replace(/\D/g, ""))) {
-      showMessage("Please enter a valid mobile number (at least 7 digits).", "error");
-      mobileInput.focus();
-      return false;
+      showFieldError(mobileError, mobileInput, "Please enter a valid mobile number (min 7 digits)");
+      if(isValid) mobileInput.focus();
+      isValid = false;
     }
     if (!dept) {
-      showMessage("Please select a department.", "error");
-      deptSelect.focus();
-      return false;
+      showFieldError(deptError, deptSelect, "Please select a department");
+      if(isValid) deptSelect.focus();
+      isValid = false;
     }
-    return true;
+
+    if (!isValid) {
+        showMessage("Please correct the errors above.", "error");
+    }
+    return isValid;
   }
 
   // ── Registration ────────────────────────────────────────────────────────────
