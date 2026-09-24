@@ -1,11 +1,3 @@
-"""
-verify_api.py
-
-Smoke-test script for the SmartQueue backend API.
-Tests the endpoints required for Milestone 1 (patient-side digital flow).
-
-Run: python verify_api.py  (with server running on localhost:8000)
-"""
 import sys
 import json
 import urllib.request
@@ -84,7 +76,7 @@ status, body = req("POST", "/api/v1/registrations/qr", {
     "department_id": DEPT_ID,
 })
 check("POST /registrations/qr duplicate returns 409", status == 409, f"got {status} — {body}")
-detail = body.get("detail", {})
+detail = body.get("detail", body) # Update in script: if we return raw response, there might be no "detail" key. Let's check both
 check("duplicate detail has error=ACTIVE_VISIT_EXISTS",
       detail.get("error") == "ACTIVE_VISIT_EXISTS", str(detail))
 check("duplicate detail has visit_id", "visit_id" in detail, str(detail))

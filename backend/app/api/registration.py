@@ -1,13 +1,6 @@
-"""
-app/api/registration.py
-
-QR and staff-assisted registration endpoints.
-Owns: route definition and HTTP semantics only.
-All registration business logic is in registration_service.py.
-Doc A §2.1, §2.2.
-"""
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
 
 from app.repositories.database import get_db
 from app.schemas.schemas import (
@@ -42,9 +35,9 @@ def _run_registration(
 
     if is_duplicate:
         # Doc A §2.1 — active visit exists, return 409
-        raise HTTPException(
-            status_code=409,
-            detail=DuplicateActiveVisitResponse(**data).model_dump(),
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content=DuplicateActiveVisitResponse(**data).model_dump()
         )
 
     # Doc A §2.1 — new registration, return 201
@@ -55,6 +48,9 @@ def _run_registration(
     "/qr",
     response_model=RegistrationResponse,
     status_code=201,
+    responses={
+        409: {"model": DuplicateActiveVisitResponse}
+    },
     summary="QR registration",
     description=(
         "Patient self-registers via QR code / web form. "
@@ -73,6 +69,9 @@ def register_qr(
     "/staff",
     response_model=RegistrationResponse,
     status_code=201,
+    responses={
+        409: {"model": DuplicateActiveVisitResponse}
+    },
     summary="Staff-assisted registration",
     description=(
         "Staff registers a patient on their behalf. "

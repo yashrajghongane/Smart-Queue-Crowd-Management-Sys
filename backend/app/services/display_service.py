@@ -1,19 +1,11 @@
-"""
-app/services/display_service.py
-
-Staff and public read models — assembles query results into response-ready dicts.
-No state changes made here. Doc A §5.
-"""
 from __future__ import annotations
-
-from datetime import datetime
 from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from app.repositories.token_repository import TokenRepository
 from app.repositories.visit_repository import VisitRepository
-
+from app.repositories.queue_repository import QueueRepository
+from app.models.models import _utcnow
 
 class DisplayService:
     """
@@ -25,6 +17,7 @@ class DisplayService:
         self.db = db
         self._tokens = TokenRepository(db)
         self._visits = VisitRepository(db)
+        self._queues = QueueRepository(db)
 
     def get_patient_status(self, visit_id: str) -> Optional[dict]:
         """
@@ -56,4 +49,23 @@ class DisplayService:
             "serving_token": serving_token_number,
             "department_id": visit.department_id,
             "updated_at": token.updated_at,
+        }
+
+    def get_public_display(self, queue_id: str) -> Optional[dict]:
+        queue = self._queues.find_by_id(queue_id)
+        if not queue:
+            return None
+
+        serving = self._tokens.find_serving_token(queue_id)
+        next_token = self._tokens.find_next_waiting(queue_id)
+        waiting_count = self._tokens.count_waiting(queue_id)
+
+        now = _utcnow()
+
+        return {
+            "queue_id": queue_id,
+            "serving_token": serving.token_number if serving else None,
+            "next_token": next_token.token_number if next_token else None,
+            "waiting_count": waiting_count,
+            "updated_at": serving.updated_at if serving else now
         }

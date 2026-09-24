@@ -1,22 +1,22 @@
-"""
-app/api/public_display.py
-
-Public display route — token board for waiting-area screens. Doc A §2.10.
-CURRENT STATUS: Stub — implemented in the staff/display milestone.
-"""
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.repositories.database import get_db
 from app.schemas.schemas import PublicDisplayResponse
 
 router = APIRouter()
 
-
 @router.get(
     "/queues/{queue_id}/display",
     response_model=PublicDisplayResponse,
-    summary="Public display (STUB)",
+    summary="Public display",
 )
-def get_public_display(queue_id: str):
-    raise HTTPException(
-        status_code=501,
-        detail="Public display is implemented in the staff/display milestone.",
-    )
+def get_public_display(queue_id: str, db: Session = Depends(get_db)):
+    from app.services.display_service import DisplayService
+    service = DisplayService(db)
+
+    # We should add a method to display service
+    data = service.get_public_display(queue_id)
+    if data is None:
+         raise HTTPException(status_code=404, detail="Queue not found")
+
+    return PublicDisplayResponse(**data)
