@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.api import registration, patient, queue, public_display, device
+from app.api import registration, patient, queue, token, public_display, device
 
 import os
 
@@ -52,19 +52,17 @@ app.include_router(
 app.include_router(
     queue.router,
     prefix="/api/v1/queues",
-    tags=["Queue"],
+    tags=["Queue (Stub)"],
 )
-# Token sub-routes need a separate prefix to match /api/v1/tokens/{token_id}/...
 app.include_router(
-    queue.router,
-    prefix="/api/v1",
-    tags=["Token Actions"],
-    include_in_schema=False,  # Avoid duplicate docs; real token routes defined in queue.py
+    token.router,
+    prefix="/api/v1/tokens",
+    tags=["Token Actions (Stub)"],
 )
 app.include_router(
     public_display.router,
     prefix="/api/v1/public",
-    tags=["Public Display"],
+    tags=["Public Display (Stub)"],
 )
 app.include_router(
     device.router,

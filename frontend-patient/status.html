@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta name="theme-color" content="#2563eb" />
   <title>SmartQueue — Your Token</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -31,83 +32,121 @@
   <!-- ── Main ── -->
   <main class="max-w-md mx-auto px-4 py-6">
 
+    <!-- Offline banner (hidden when online) -->
+    <div id="offline-banner"
+         class="hidden bg-orange-50 border border-orange-200 text-orange-700 rounded-xl p-4 text-sm mb-5 font-medium flex items-center gap-2 shadow-sm"
+         role="alert">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M18.364 5.636a9 9 0 010 12.728M15.536 8.464a5 5 0 010 7.072M12 12h.01M9.172 14.828A4 4 0 0112 12m-2.828 2.828A4 4 0 019 9" />
+      </svg>
+      <span>You appear to be offline. Status will refresh automatically when you reconnect.</span>
+    </div>
+
     <!-- Error banner (hidden by default) -->
     <div id="error-banner"
-         class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-base mb-6 font-medium flex items-start gap-2 shadow-sm">
-      <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-      <span></span>
+         class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-base mb-6 font-medium flex items-start gap-2 shadow-sm"
+         role="alert"
+         aria-live="assertive">
+      <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <!-- Use a named inner span so JS can update text without clearing the SVG -->
+      <span id="error-text"></span>
     </div>
 
     <!-- Loading spinner -->
-    <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
-      <svg class="animate-spin w-12 h-12 text-blue-600" fill="none" viewBox="0 0 24 24">
+    <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4" aria-label="Loading token status">
+      <svg class="animate-spin w-12 h-12 text-blue-600" fill="none" viewBox="0 0 24 24" aria-hidden="true">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
       </svg>
       <p class="text-slate-600 text-lg font-medium">Loading your token status…</p>
     </div>
 
-    <!-- Status content (hidden until data loads) -->
-    <div id="status-content" class="hidden space-y-6">
+    <!-- Status content — aria-live so screen readers announce updates -->
+    <div id="status-content"
+         class="hidden space-y-6"
+         aria-live="polite"
+         aria-atomic="false">
 
       <!-- Token card -->
       <div class="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 text-center relative overflow-hidden">
-        <!-- decorative background -->
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-50 rounded-full opacity-50 blur-2xl"></div>
-        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-50 rounded-full opacity-50 blur-2xl"></div>
+        <!-- Decorative background blobs -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-50 rounded-full opacity-50 blur-2xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-50 rounded-full opacity-50 blur-2xl" aria-hidden="true"></div>
 
         <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3 relative z-10">Your Token Number</p>
         <div id="token-number"
-             class="text-7xl sm:text-8xl font-black text-blue-700 tracking-tighter mb-4 drop-shadow-sm relative z-10">
+             class="text-7xl sm:text-8xl font-black text-blue-700 tracking-tighter mb-4 drop-shadow-sm relative z-10"
+             aria-label="Token number">
           —
         </div>
         <div class="relative z-10">
-          <span id="token-state" class="inline-block px-4 py-1.5 rounded-full text-base font-bold uppercase tracking-wide">
+          <span id="token-state"
+                class="inline-block px-4 py-1.5 rounded-full text-base font-bold uppercase tracking-wide"
+                aria-label="Token state">
             —
           </span>
         </div>
       </div>
 
       <!-- State message -->
-      <div id="state-message" class="rounded-2xl p-5 border text-base font-medium text-center shadow-sm flex items-center justify-center gap-2">
+      <div id="state-message"
+           class="rounded-2xl p-5 border text-base font-medium text-center shadow-sm flex items-center justify-center gap-2">
       </div>
 
       <!-- Queue position -->
       <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 divide-y divide-slate-100">
+        <!-- Patients ahead — hidden for non-WAITING states -->
         <div id="patients-ahead-section" class="pb-5 flex justify-between items-center">
-          <p class="text-sm text-slate-500 uppercase tracking-wider font-semibold">Patients Ahead</p>
+          <p id="patients-ahead-label" class="text-sm text-slate-500 uppercase tracking-wider font-semibold">
+            Patients Ahead
+          </p>
           <div id="patients-ahead" class="text-4xl font-extrabold text-slate-800">—</div>
         </div>
+        <!-- Currently serving — hidden when no token is being served -->
         <div id="serving-token-section" class="pt-5 flex justify-between items-center">
           <p class="text-sm text-slate-500 uppercase tracking-wider font-semibold">Currently Serving</p>
-          <div id="serving-token" class="text-2xl font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">—</div>
+          <div id="serving-token"
+               class="text-2xl font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">—</div>
         </div>
       </div>
 
       <!-- Auto-refresh note + manual refresh -->
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-100/50 p-4 rounded-2xl border border-slate-200">
         <p class="text-xs text-slate-500 font-medium text-center sm:text-left flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           Updated: <span id="last-updated" class="font-bold text-slate-700">—</span>
-          <span class="hidden sm:inline">&nbsp;·&nbsp; Auto-refreshes</span>
+          <span class="hidden sm:inline">&nbsp;·&nbsp; Auto-refreshes every 10 s</span>
         </p>
         <button
           id="refresh-btn"
+          aria-label="Refresh token status now"
           class="w-full sm:w-auto text-sm bg-white border border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-700 px-5 py-2.5 rounded-xl
                  font-bold transition-all focus:outline-none focus:ring-4 focus:ring-slate-200 shadow-sm flex items-center justify-center gap-2"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
           Refresh Now
         </button>
       </div>
 
     </div>
 
-    <!-- Register new (shown on fatal error) -->
+    <!-- Register again (shown on fatal error) -->
     <div class="mt-10 text-center">
       <button id="register-new-btn"
-              class="hidden text-base font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-6 py-3 rounded-xl transition-colors inline-flex items-center gap-2 mx-auto">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              class="hidden text-base font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-6 py-3 rounded-xl transition-colors inline-flex items-center gap-2 mx-auto focus:outline-none focus:ring-4 focus:ring-blue-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
         Register Again
       </button>
     </div>

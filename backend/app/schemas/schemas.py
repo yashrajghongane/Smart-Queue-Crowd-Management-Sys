@@ -38,12 +38,20 @@ class RegistrationRequest(BaseModel):
         digits = re.sub(r"\D", "", v)
         if len(digits) < 7:
             raise ValueError("mobile must contain at least 7 digits")
+        # Normalize common prefixes (+91 or leading 0) for 10-digit mobile numbers
+        if len(digits) == 12 and digits.startswith("91"):
+            digits = digits[2:]
+        elif len(digits) == 11 and digits.startswith("0"):
+            digits = digits[1:]
         return digits  # Store normalised digits
 
     @field_validator("full_name")
     @classmethod
     def full_name_strip(cls, v: str) -> str:
-        return v.strip()
+        stripped = v.strip()
+        if not stripped:
+            raise ValueError("full_name must not be empty or whitespace only")
+        return stripped
 
 
 class RegistrationResponse(BaseModel):
