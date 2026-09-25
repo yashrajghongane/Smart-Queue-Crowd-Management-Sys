@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>SmartQueue — Staff Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-slate-900 leading-tight">Staff Dashboard</h1>
+          <p class="text-sm text-slate-500 font-medium">City Hospital - General Medicine</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <div id="status-message" class="hidden mb-6 flex items-start gap-3 rounded-xl p-4 border text-base shadow-sm font-medium"></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Queue Summary -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-semibold mb-4 text-slate-800">Queue Summary</h2>
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-slate-600">Currently Serving:</span>
+          <span id="serving-token" class="text-2xl font-bold text-blue-600">--</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-600">Waiting Patients:</span>
+          <span id="waiting-count" class="text-xl font-semibold text-slate-900">0</span>
+        </div>
+      </section>
+
+      <!-- Queue Controls -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-semibold mb-4 text-slate-800">Queue Controls</h2>
+
+        <div class="grid grid-cols-1 gap-3">
+          <button id="btn-call-next" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-colors text-lg flex items-center justify-center gap-2">
+            Call Next Patient
+          </button>
+
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <button id="btn-hold" class="bg-amber-100 text-amber-700 hover:bg-amber-200 font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+              Hold Token
+            </button>
+            <button id="btn-recall" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+              Recall Token
+            </button>
+            <button id="btn-skip" class="bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+              Skip Token
+            </button>
+            <button id="btn-complete" class="bg-green-100 text-green-700 hover:bg-green-200 font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+              Complete Visit
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

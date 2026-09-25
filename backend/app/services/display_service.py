@@ -57,3 +57,41 @@ class DisplayService:
             "department_id": visit.department_id,
             "updated_at": token.updated_at,
         }
+
+    def get_public_display(self, queue_id: str) -> Optional[dict]:
+        """
+        Assemble the public display response for GET /api/v1/public/queues/{queue_id}/display.
+        Returns None if queue not found.
+        Doc A §2.10.
+        """
+        # Validate queue exists
+        # In a real repository we might do self._queues.find_by_id(queue_id),
+        # but here we can just use tokens to get serving and next
+        serving = self._tokens.find_serving_token(queue_id)
+        serving_token_number = serving.token_number if serving else None
+
+        # To find next token, we want the lowest sequence WAITING token
+        from sqlalchemy import select, and_
+        from app.models.models import Token, _utcnow
+
+        stmt = select(Token).where(
+            and_(Token.queue_id == queue_id, Token.state == "WAITING")
+        ).order_by(Token.sequence_number.asc()).limit(1)
+
+        next_token_obj = self.db.execute(stmt).scalar_one_or_none()
+        next_token_number = next_token_obj.token_number if next_token_obj else None
+
+        from sqlalchemy import func
+        waiting_count = self.db.execute(
+            select(func.count(Token.id)).where(
+                and_(Token.queue_id == queue_id, Token.state == "WAITING")
+            )
+        ).scalar_one()
+
+        return {
+            "queue_id": queue_id,
+            "serving_token": serving_token_number,
+            "next_token": next_token_number,
+            "waiting_count": waiting_count,
+            "updated_at": _utcnow().isoformat() + "Z"
+        }
