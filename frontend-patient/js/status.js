@@ -24,11 +24,14 @@
 
   // ── DOM references ──────────────────────────────────────────────────────────
   const tokenNumberEl       = document.getElementById("token-number");
+  const queueNameEl         = document.getElementById("queue-name");
   const stateEl             = document.getElementById("token-state");
   const stateMessageEl      = document.getElementById("state-message");
   const patientsAheadSection = document.getElementById("patients-ahead-section");
   const patientsAheadEl     = document.getElementById("patients-ahead");
   const patientsAheadLabel  = document.getElementById("patients-ahead-label");
+  const estimatedWaitSection = document.getElementById("estimated-wait-section");
+  const estimatedWaitEl     = document.getElementById("estimated-wait");
   const servingSection      = document.getElementById("serving-token-section");
   const servingTokenEl      = document.getElementById("serving-token");
   const lastUpdatedEl       = document.getElementById("last-updated");
@@ -151,6 +154,11 @@
       icon:    "",
     };
 
+    // Queue Name
+    if (queueNameEl) {
+      queueNameEl.textContent = data.queue_name || "General Medicine Queue";
+    }
+
     // Token number
     tokenNumberEl.textContent = data.token_number;
 
@@ -162,21 +170,27 @@
     stateMessageEl.innerHTML = `${cfg.icon} <span>${cfg.message}</span>`;
     stateMessageEl.className = `rounded-2xl p-5 border text-base font-medium text-center shadow-sm flex items-center justify-center gap-2 ${cfg.color}`;
 
-    // Patients ahead — only shown for WAITING state
+    // Patients ahead & Estimated wait — only shown for WAITING state
     if (data.state === "WAITING") {
       patientsAheadSection.classList.remove("hidden");
+      if (estimatedWaitSection) estimatedWaitSection.classList.remove("hidden");
+
       if (data.patients_ahead === 0) {
         // "You're next!" — update both label and value clearly
         if (patientsAheadLabel) patientsAheadLabel.textContent = "Position";
         patientsAheadEl.textContent = "You're next!";
         patientsAheadEl.className   = "text-2xl font-extrabold text-emerald-600";
+        if (estimatedWaitEl) estimatedWaitEl.textContent = "< 5 mins";
       } else {
         if (patientsAheadLabel) patientsAheadLabel.textContent = "Patients Ahead";
         patientsAheadEl.textContent = data.patients_ahead;
         patientsAheadEl.className   = "text-4xl font-extrabold text-slate-800";
+        const waitMins = data.estimated_wait_minutes !== undefined ? data.estimated_wait_minutes : (data.patients_ahead * 5);
+        if (estimatedWaitEl) estimatedWaitEl.textContent = `~${waitMins} mins`;
       }
     } else {
       patientsAheadSection.classList.add("hidden");
+      if (estimatedWaitSection) estimatedWaitSection.classList.add("hidden");
     }
 
     // Currently serving — only shown when a token is actively being served

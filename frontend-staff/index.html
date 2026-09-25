@@ -8,77 +8,183 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
-<header class="sticky top-0 z-10 border-b border-slate-200 bg-white">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-    <div>
-      <p class="text-sm font-semibold text-blue-600">SMARTQUEUE</p>
-      <h1 class="text-xl font-bold">Staff Dashboard</h1>
-      <p class="text-sm text-slate-500">General Medicine · Queue operations</p>
-    </div>
+<header class="sticky top-0 z-20 border-b border-slate-200 bg-white shadow-sm">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
     <div class="flex items-center gap-3">
-      <a href="/staff/public.html" target="_blank" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50">Public display</a>
-      <a href="/patient/" class="hidden rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50 sm:block">Patient view</a>
+      <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white font-black text-lg">
+        SQ
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-lg font-bold leading-tight">SmartQueue Staff Dashboard</h1>
+          <span id="role-badge" class="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">Staff</span>
+        </div>
+        <p class="text-xs text-slate-500">General Medicine · Live Queue & Crowd Operations</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="auth-section" class="flex items-center gap-2">
+        <span id="user-display" class="hidden text-xs font-medium text-slate-600 sm:inline">Dr. Sharma</span>
+        <button id="btn-login-toggle" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold hover:bg-slate-50">Login</button>
+      </div>
+      <a href="/staff/public.html" target="_blank" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50">Public Display</a>
+      <a href="/patient/" target="_blank" class="hidden rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50 sm:block">Patient View</a>
     </div>
   </div>
 </header>
+
+<!-- Login Modal -->
+<div id="login-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+  <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-slate-200">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold">Staff Authentication</h3>
+      <button id="btn-close-login" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+    </div>
+    <div id="login-error" class="hidden mb-3 p-2.5 rounded-lg bg-red-50 text-red-700 text-xs font-medium"></div>
+    <form id="login-form" class="space-y-3">
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
+        <input id="login-username" type="text" value="doctor" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+        <input id="login-password" type="password" value="doctor123" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+      </div>
+      <button type="submit" id="btn-login-submit" class="w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition">Sign In</button>
+    </form>
+    <p class="mt-3 text-center text-xs text-slate-400">Default demo: doctor / doctor123</p>
+  </div>
+</div>
+
 <main class="mx-auto max-w-6xl space-y-6 px-4 py-6">
   <div id="status-message" class="hidden rounded-xl border p-4 text-sm font-medium" role="alert" aria-live="polite"></div>
-  <section class="grid gap-6 lg:grid-cols-3">
-    <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
-      <div class="mb-6 flex items-center justify-between">
+
+  <!-- Row 1: Digital Queue & Physical Crowd Side-by-Side (Visually Separated) -->
+  <section class="grid gap-6 lg:grid-cols-2">
+
+    <!-- 1. DIGITAL QUEUE PANEL -->
+    <article class="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1.5 bg-blue-600"></div>
+      <div class="mb-4 flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-semibold">Digital queue</h2>
-          <p class="text-sm text-slate-500">The source of truth for token flow.</p>
+          <span class="inline-block rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 uppercase tracking-wider">Domain 1</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Digital Patient Queue</h2>
+          <p class="text-xs text-slate-500">Service demand: registered patient tokens</p>
         </div>
-        <span id="queue-refresh-state" class="text-xs text-slate-500">Updating…</span>
+        <span id="queue-refresh-state" class="text-xs text-slate-400">Syncing…</span>
       </div>
+
       <div class="grid gap-4 sm:grid-cols-2">
-        <div class="rounded-xl bg-slate-50 p-5">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Currently serving</p>
+        <div class="rounded-xl bg-blue-50/60 border border-blue-100 p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-blue-800">Currently Serving</p>
           <p id="serving-token" class="mt-2 text-5xl font-black tracking-tight text-blue-700">—</p>
+          <p id="serving-duration" class="mt-1 text-xs text-slate-400">Active consultation</p>
         </div>
-        <div class="rounded-xl bg-slate-50 p-5">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Waiting patients</p>
-          <p id="waiting-count" class="mt-2 text-5xl font-black tracking-tight">0</p>
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-600">Waiting Patients</p>
+          <p id="waiting-count" class="mt-2 text-5xl font-black tracking-tight text-slate-800">0</p>
+          <p class="mt-1 text-xs text-slate-400">Tokens in WAITING state</p>
+        </div>
+      </div>
+
+      <div class="mt-5 border-t border-slate-100 pt-4">
+        <p class="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Queue Controls</p>
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <button id="btn-call-next" class="rounded-xl bg-blue-600 px-3 py-2.5 text-xs font-bold text-white hover:bg-blue-700 shadow-sm transition">CALL NEXT</button>
+          <button id="btn-hold" class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition">HOLD</button>
+          <button id="btn-recall" class="rounded-xl bg-indigo-50 border border-indigo-200 px-3 py-2.5 text-xs font-bold text-indigo-800 hover:bg-indigo-100 transition">RECALL</button>
+          <button id="btn-skip" class="rounded-xl bg-rose-50 border border-rose-200 px-3 py-2.5 text-xs font-bold text-rose-800 hover:bg-rose-100 transition">SKIP</button>
+        </div>
+        <button id="btn-complete" class="mt-2 w-full rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 shadow-sm transition">COMPLETE CURRENT CONSULTATION</button>
+
+        <div class="mt-3 flex items-center gap-2">
+          <input id="recall-token-input" type="text" placeholder="UUID of token to recall from HOLD or SKIPPED" class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-mono text-slate-700 focus:outline-none focus:border-indigo-500">
+          <button id="btn-recall-custom" class="rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">Recall ID</button>
         </div>
       </div>
     </article>
-    <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div>
-        <h2 class="text-lg font-semibold">Physical occupancy</h2>
-        <p class="mt-1 text-sm text-slate-500">Separate from the digital queue.</p>
+
+    <!-- 2. PHYSICAL CROWD PANEL -->
+    <article class="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1.5 bg-emerald-600"></div>
+      <div class="mb-4 flex items-center justify-between">
+        <div>
+          <span class="inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700 uppercase tracking-wider">Domain 2</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Physical Waiting Area</h2>
+          <p class="text-xs text-slate-500">Hardware sensing: doorway IR traffic & occupancy</p>
+        </div>
+        <span id="crowd-refresh-state" class="text-xs text-slate-400">Syncing…</span>
       </div>
-      <div class="mt-6 rounded-xl border border-dashed border-slate-300 p-5">
-        <p class="text-sm font-semibold text-slate-500">Hardware status</p>
-        <p class="mt-2 text-base font-medium">Deferred to the ESP32 milestone.</p>
-        <p class="mt-1 text-sm text-slate-500">Digital queue count is not physical occupancy.</p>
-      </div>
-    </article>
-  </section>
-  <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <div class="mb-4">
-      <h2 class="text-lg font-semibold">Queue actions</h2>
-      <p class="text-sm text-slate-500">Actions are enforced by the backend queue service.</p>
-    </div>
-    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <button id="btn-call-next" class="rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50">Call next</button>
-      <button id="btn-hold" class="rounded-xl bg-amber-50 px-4 py-3 font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50">Hold serving</button>
-      <button id="btn-recall" class="rounded-xl bg-indigo-50 px-4 py-3 font-semibold text-indigo-800 hover:bg-indigo-100 disabled:opacity-50">Recall token</button>
-      <button id="btn-skip" class="rounded-xl bg-rose-50 px-4 py-3 font-semibold text-rose-800 hover:bg-rose-100 disabled:opacity-50">Skip serving</button>
-      <button id="btn-complete" class="rounded-xl bg-emerald-50 px-4 py-3 font-semibold text-emerald-800 hover:bg-emerald-100 disabled:opacity-50 sm:col-span-2 lg:col-span-4">Complete serving</button>
-    </div>
-    <div class="mt-4 border-t border-slate-100 pt-4">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <label for="recall-token-input" class="text-xs font-semibold text-slate-500 whitespace-nowrap">Recall specific token ID (optional):</label>
-        <div class="flex flex-1 gap-2">
-          <input id="recall-token-input" type="text" placeholder="UUID of token to recall from HOLD or SKIPPED" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-          <button id="btn-recall-custom" class="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-700 whitespace-nowrap">Recall ID</button>
+
+      <!-- Main Occupancy Display -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-5">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-600">Physical Occupancy</p>
+            <span id="capacity-badge" class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">NORMAL</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span id="occupancy-count" class="text-5xl font-black tracking-tight text-slate-900">0</span>
+            <span id="capacity-max" class="text-lg font-bold text-slate-400">/ 10 capacity</span>
+          </div>
+          <div class="mt-3 w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+            <div id="utilization-bar" class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <p id="utilization-text" class="mt-1.5 text-xs text-slate-500 font-medium">0% utilization</p>
+        </div>
+
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-5 flex flex-col justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-600">Today's Traffic</p>
+          <div class="grid grid-cols-3 gap-2 text-center my-2">
+            <div>
+              <p class="text-xs text-slate-400">Entries</p>
+              <p id="entries-today" class="text-2xl font-black text-emerald-600">0</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Exits</p>
+              <p id="exits-today" class="text-2xl font-black text-rose-600">0</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Net</p>
+              <p id="net-change" class="text-2xl font-black text-slate-700">0</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 border-t border-slate-200 pt-1">Counts physical pedestrians crossing doorway</p>
         </div>
       </div>
-      <p class="mt-1 text-xs text-slate-400">Tokens placed on HOLD or SKIPPED can be recalled back to WAITING.</p>
-    </div>
+
+      <!-- Stale Warning Banner -->
+      <div id="stale-warning" class="hidden mt-4 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800 font-medium flex items-center gap-2">
+        <svg class="h-4 w-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        <span>Sensor device heartbeat stale (>5m). Check ESP32 power or Wi-Fi.</span>
+      </div>
+
+      <!-- Hardware & Diagnostics -->
+      <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-700 mb-2">
+          <span>ESP32 Hardware Diagnostics</span>
+          <span id="device-status-badge" class="rounded-full bg-slate-200 px-2 py-0.5 text-slate-700">OFFLINE</span>
+        </div>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-600">
+          <div>Device: <span id="device-code" class="font-mono font-bold text-slate-800">DEV-001</span></div>
+          <div>Firmware: <span id="firmware-version" class="font-mono text-slate-800">0.1.0</span></div>
+          <div>Last Sequence: <span id="last-sequence" class="font-mono text-slate-800">—</span></div>
+          <div>Last Seen: <span id="last-seen" class="text-slate-800">—</span></div>
+          <div>Sensor A (GPIO 26): <span id="sensor-a-status" class="text-emerald-700 font-semibold">Active</span></div>
+          <div>Sensor B (GPIO 27): <span id="sensor-b-status" class="text-emerald-700 font-semibold">Active</span></div>
+        </div>
+      </div>
+    </article>
+
   </section>
+
+  <!-- Notice Banner Clarifying Separation -->
+  <div class="rounded-xl border border-slate-200 bg-white p-4 text-xs text-slate-500 shadow-sm flex items-start gap-2">
+    <svg class="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+    <span><strong>Architectural Note:</strong> Physical Occupancy and Digital Waiting Tokens are separate metrics. A patient with 2 family attendants generates 1 digital token but 3 physical entries. Conversely, a patient waiting outside generates 1 digital token but 0 waiting-room occupancy. Sensors never modify token states.</span>
+  </div>
 </main>
+
 <script src="js/config.js"></script>
 <script src="js/dashboard.js"></script>
 </body>

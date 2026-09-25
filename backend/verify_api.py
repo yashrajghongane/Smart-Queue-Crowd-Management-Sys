@@ -251,18 +251,71 @@ check("display has queue_id", body.get("queue_id") == QUEUE_ID, str(body))
 check("display has waiting_count", "waiting_count" in body, str(body))
 check("display has updated_at", "updated_at" in body, str(body))
 
-# ── 20. Device event endpoint (501 deferred) ────────────────────────────────
-print("\n[20] Device event ingestion (deferred milestone)")
+# ── 20. Device event ingestion & Crowd Management ───────────────────────────
+print("\n[20] Authenticated device event ingestion & Crowd API")
+import uuid
+unique_device_seq = random.randint(1000000, 9999999)
+
+# 20.1 Reject unauthenticated request (401)
 status, body = req("POST", "/api/v1/devices/events", {
-    "device_id": "DEV-001",
-    "zone_id": "ZONE-001",
-    "sequence": 1,
+    "device_id": "devi-0001-0000-0000-0000-000000000001",
+    "zone_id": "zone-0001-0000-0000-0000-000000000001",
+    "sequence": unique_device_seq,
     "event_type": "ENTRY",
     "event_at": "2026-09-23T16:10:32.420Z",
     "firmware_version": "0.1.0"
 })
-check("POST /devices/events returns 501", status == 501, f"got {status} — {body}")
-check("501 mentions deferred", "deferred" in str(body).lower(), str(body))
+check("POST /devices/events without key returns 401", status == 401, f"got {status} — {body}")
+
+# 20.2 Authenticated ENTRY event (200)
+url_dev = BASE + "/api/v1/devices/events"
+data_dev = json.dumps({
+    "device_id": "devi-0001-0000-0000-0000-000000000001",
+    "zone_id": "zone-0001-0000-0000-0000-000000000001",
+    "sequence": unique_device_seq,
+    "event_type": "ENTRY",
+    "event_at": "2026-09-23T16:10:32.420Z",
+    "firmware_version": "0.1.0"
+}).encode()
+headers_dev = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Device-Key": "esp32-secret-key-001"
+}
+req_dev = urllib.request.Request(url_dev, data=data_dev, headers=headers_dev, method="POST")
+with urllib.request.urlopen(req_dev) as resp_dev:
+    dev_status = resp_dev.status
+    dev_body = json.loads(resp_dev.read().decode())
+check("POST /devices/events with valid key returns 200", dev_status == 200, f"got {dev_status}")
+check("device event accepted=True", dev_body.get("accepted") is True, str(dev_body))
+check("occupancy is integer > 0", isinstance(dev_body.get("occupancy"), int) and dev_body["occupancy"] > 0, str(dev_body))
+
+# 20.3 Duplicate sequence returns accepted=False (idempotent)
+req_dup = urllib.request.Request(url_dev, data=data_dev, headers=headers_dev, method="POST")
+with urllib.request.urlopen(req_dup) as resp_dup:
+    dup_status = resp_dup.status
+    dup_body = json.loads(resp_dup.read().decode())
+check("duplicate sequence returns 200", dup_status == 200, f"got {dup_status}")
+check("duplicate sequence accepted=False", dup_body.get("accepted") is False, str(dup_body))
+
+# 20.4 Staff Login & Crowd Management API
+status_login, body_login = req("POST", "/api/v1/auth/login", {
+    "username": "doctor",
+    "password": "doctor123"
+})
+check("POST /auth/login returns 200", status_login == 200, f"got {status_login}")
+token_val = body_login.get("access_token")
+
+# Read crowd status
+url_crowd = BASE + "/api/v1/zones/zone-0001-0000-0000-0000-000000000001/crowd"
+headers_crowd = {"Accept": "application/json", "Authorization": f"Bearer {token_val}"}
+req_crowd = urllib.request.Request(url_crowd, headers=headers_crowd, method="GET")
+with urllib.request.urlopen(req_crowd) as resp_crowd:
+    crowd_status = resp_crowd.status
+    crowd_body = json.loads(resp_crowd.read().decode())
+check("GET /zones/{id}/crowd returns 200", crowd_status == 200, f"got {crowd_status}")
+check("crowd status has capacity_alert", "capacity_alert" in crowd_body, str(crowd_body))
+check("crowd status has device_status", "device_status" in crowd_body, str(crowd_body))
 
 # ── 21. Static Frontend Serving ─────────────────────────────────────────────
 print("\n[21] Static frontend serving")

@@ -23,8 +23,10 @@ class DisplayService:
         token = self._tokens.find_by_visit_id(visit_id)
         if token is None:
             return None
+        queue = self._queues.find_by_id(token.queue_id)
         patients_ahead = self._tokens.count_patients_ahead(token.queue_id, token.sequence_number)
         serving = self._tokens.find_serving_token(token.queue_id)
+        estimated_wait = (patients_ahead * 5) if token.state == "WAITING" else 0
         return {
             "visit_id": visit.id,
             "token_number": token.token_number,
@@ -32,6 +34,8 @@ class DisplayService:
             "patients_ahead": patients_ahead,
             "serving_token": serving.token_number if serving else None,
             "department_id": visit.department_id,
+            "queue_name": queue.name if queue else "OPD Queue",
+            "estimated_wait_minutes": estimated_wait,
             "updated_at": token.updated_at,
         }
 

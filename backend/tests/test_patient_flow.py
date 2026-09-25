@@ -162,16 +162,48 @@ def test_validation_errors(setup_dept):
     assert res.status_code == 404
 
 
-def test_device_events_endpoint_deferred():
-    # Valid body matching Doc A §2.11 schema sent to deferred route returns 501
-    res = client.post("/api/v1/devices/events", json={
-        "device_id": "DEV-001",
-        "zone_id": "ZONE-001",
-        "sequence": 123,
+def test_device_events_endpoint_authenticated():
+    unique_seq = int(uuid.uuid4().int % 10000000) + 1000
+    # 1. Without credentials -> 401
+    res_no_auth = client.post("/api/v1/devices/events", json={
+        "device_id": "devi-0001-0000-0000-0000-000000000001",
+        "zone_id": "zone-0001-0000-0000-0000-000000000001",
+        "sequence": unique_seq,
         "event_type": "ENTRY",
         "event_at": "2026-09-23T16:10:32.420Z",
         "firmware_version": "0.1.0"
     })
-    assert res.status_code == 501
-    data = res.json()
-    assert "deferred" in data.get("detail", "").lower()
+    assert res_no_auth.status_code == 401
+
+    # 2. With invalid credentials -> 401
+    res_bad_auth = client.post(
+        "/api/v1/devices/events",
+        headers={"X-Device-Key": "wrong-secret-key"},
+        json={
+            "device_id": "devi-0001-0000-0000-0000-000000000001",
+            "zone_id": "zone-0001-0000-0000-0000-000000000001",
+            "sequence": unique_seq,
+            "event_type": "ENTRY",
+            "event_at": "2026-09-23T16:10:32.420Z",
+            "firmware_version": "0.1.0"
+        }
+    )
+    assert res_bad_auth.status_code == 401
+
+    # 3. With valid credentials -> 200 OK
+    res_ok = client.post(
+        "/api/v1/devices/events",
+        headers={"X-Device-Key": "esp32-secret-key-001"},
+        json={
+            "device_id": "devi-0001-0000-0000-0000-000000000001",
+            "zone_id": "zone-0001-0000-0000-0000-000000000001",
+            "sequence": unique_seq,
+            "event_type": "ENTRY",
+            "event_at": "2026-09-23T16:10:32.420Z",
+            "firmware_version": "0.1.0"
+        }
+    )
+    assert res_ok.status_code == 200
+    data = res_ok.json()
+    assert data["accepted"] is True
+    assert data["event_type"] == "ENTRY"

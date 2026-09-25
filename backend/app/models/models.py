@@ -205,6 +205,8 @@ class StaffUser(Base):
     __tablename__ = "staff_users"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_uuid)
+    username: Mapped[Optional[str]] = mapped_column(String(50), unique=True, nullable=True)
+    password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     role: Mapped[str] = mapped_column(String(30), nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
@@ -232,6 +234,7 @@ class Zone(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_uuid)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
+    current_occupancy: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     # UNDECIDED thresholds — must be set during demo configuration and testing.
     moderate_threshold: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     high_threshold: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
@@ -257,6 +260,8 @@ class Device(Base):
         String(36), ForeignKey("zones.id"), nullable=False
     )
     firmware_version: Mapped[str] = mapped_column(String(30), nullable=False)
+    credential_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    last_sequence: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     last_seen_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=_utcnow)

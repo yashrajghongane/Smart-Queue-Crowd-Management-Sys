@@ -1,62 +1,45 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyc
-.Python
 
 # Virtual environments
 .venv/
-venv/
 env/
+venv/
 ENV/
 
-# Environment variables
-.env
-*.env
-!.env.example
-
-# SQLite database files
+# Database files
 *.db
+*.db-journal
+*.db-wal
+*.db-shm
 *.sqlite
 *.sqlite3
 
-# Alembic
-# (versions directory is committed; generated db is not)
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+hardware/esp32/smartqueue_firmware/config.h
 
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-.eggs/
-
-# Testing
+# Testing & Coverage
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
 
-# IDEs
+# IDE & Editor artifacts
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# Node (for later frontend tooling if added)
-node_modules/
-dist/
-
-# OS
+# Operating System files
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-
-# Jupyter
-.ipynb_checkpoints/
-
-# MyPy
-.mypy_cache/
-*.db-shm
-*.db-wal
+ehthumbs.db
+desktop.ini

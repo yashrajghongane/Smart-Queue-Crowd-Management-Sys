@@ -55,6 +55,8 @@ class PatientStatusResponse(BaseModel):
     patients_ahead: int
     serving_token: Optional[str]
     department_id: str
+    queue_name: Optional[str] = None
+    estimated_wait_minutes: Optional[int] = None
     updated_at: datetime
 
 class QueueSummaryResponse(BaseModel):
@@ -130,3 +132,47 @@ class DeviceEventResponse(BaseModel):
     occupancy: int
     capacity_alert: str
     processed_at: datetime
+
+# ── Auth & User Schemas ───────────────────────────────────────────────────────
+
+class LoginRequest(BaseModel):
+    username: str = Field(..., min_length=1, max_length=50)
+    password: str = Field(..., min_length=1)
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    role: str
+    display_name: str
+    user_id: str
+
+class StaffUserResponse(BaseModel):
+    id: str
+    username: Optional[str]
+    display_name: str
+    role: str
+    active: bool
+
+# ── Crowd & Zone Detail Schemas ───────────────────────────────────────────────
+
+class CrowdDetailResponse(BaseModel):
+    zone_id: str
+    zone_name: str
+    occupancy: int
+    capacity: int
+    utilization_percent: float
+    capacity_alert: str
+    entries_today: int
+    exits_today: int
+    net_change_today: int
+    last_event_type: Optional[str] = None
+    last_event_time: Optional[datetime] = None
+    last_sequence: Optional[int] = None
+    device_id: Optional[str] = None
+    device_code: Optional[str] = None
+    device_status: str  # "ONLINE" | "STALE" | "OFFLINE" | "NO_DEVICE"
+    firmware_version: Optional[str] = None
+    last_seen_at: Optional[datetime] = None
+    updated_at: datetime
+
