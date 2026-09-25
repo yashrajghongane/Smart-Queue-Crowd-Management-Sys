@@ -3,6 +3,7 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api import registration, patient, queue, token, public_display, device
@@ -40,6 +41,11 @@ if os.path.isdir(_patient_frontend):
 if os.path.isdir(_staff_frontend):
     app.mount("/staff", StaticFiles(directory=_staff_frontend, html=True), name="staff-frontend")
 
+@app.get("/public", include_in_schema=False)
+@app.get("/display", include_in_schema=False)
+def public_display_redirect():
+    return RedirectResponse(url="/staff/public.html")
+
 @app.get("/health", tags=["System"])
 def health():
     return {"status": "ok", "version": settings.APP_VERSION, "app": settings.APP_NAME}
@@ -52,4 +58,5 @@ def root():
         "health": "/health",
         "patient_app": "/patient/",
         "staff_app": "/staff/",
+        "public_display": "/staff/public.html",
     }

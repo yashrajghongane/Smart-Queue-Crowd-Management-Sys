@@ -6,6 +6,8 @@
   const waitingEl = document.getElementById("waiting-count");
   const messageEl = document.getElementById("status-message");
   const refreshEl = document.getElementById("queue-refresh-state");
+  const recallInput = document.getElementById("recall-token-input");
+  const btnRecallCustom = document.getElementById("btn-recall-custom");
   const buttons = {
     call: document.getElementById("btn-call-next"),
     hold: document.getElementById("btn-hold"),
@@ -14,6 +16,8 @@
     complete: document.getElementById("btn-complete"),
   };
   let servingTokenId = null;
+  let lastActionTokenId = null;
+
   function message(text, type="info") {
     messageEl.textContent = text;
     messageEl.className = "rounded-xl border p-4 text-sm font-medium " + ({
@@ -24,7 +28,14 @@
     messageEl.classList.remove("hidden");
   }
   function clearMessage() { messageEl.textContent = ""; messageEl.classList.add("hidden"); }
-  function setBusy(busy) { Object.values(buttons).forEach(btn => btn.disabled = busy || (btn !== buttons.call && !servingTokenId)); }
+  function setBusy(busy) {
+    if (buttons.call) buttons.call.disabled = busy;
+    if (buttons.hold) buttons.hold.disabled = busy || !servingTokenId;
+    if (buttons.skip) buttons.skip.disabled = busy || !servingTokenId;
+    if (buttons.complete) buttons.complete.disabled = busy || !servingTokenId;
+    if (buttons.recall) buttons.recall.disabled = busy;
+    if (btnRecallCustom) btnRecallCustom.disabled = busy;
+  }
   async function loadQueue() {
     try {
       refreshEl.textContent = "Updating…";
@@ -65,21 +76,36 @@
   }
   buttons.call.addEventListener("click", () => action("/api/v1/queues/" + QUEUE_ID + "/call-next", {}, "Next patient called."));
   buttons.hold.addEventListener("click", () => {
-    if (servingTokenId) action("/api/v1/tokens/" + servingTokenId + "/hold", {reason: "Staff hold"}, "Token placed on hold.");
+    if (servingTokenId) {
+      lastActionTokenId = servingTokenId;
+      if (recallInput) recallInput.value = lastActionTokenId;
+      action("/api/v1/tokens/" + servingTokenId + "/hold", {reason: "Staff hold"}, "Token placed on hold.");
+    }
   });
   buttons.skip.addEventListener("click", () => {
-    if (servingTokenId) action("/api/v1/tokens/" + servingTokenId + "/skip", {reason: "No show"}, "Token skipped.");
+    if (servingTokenId) {
+      lastActionTokenId = servingTokenId;
+      if (recallInput) recallInput.value = lastActionTokenId;
+      action("/api/v1/tokens/" + servingTokenId + "/skip", {reason: "No show"}, "Token skipped.");
+    }
   });
   buttons.complete.addEventListener("click", () => {
     if (servingTokenId) action("/api/v1/tokens/" + servingTokenId + "/complete", {}, "Visit completed.");
   });
-  buttons.recall.addEventListener("click", () => {
-    if (!servingTokenId) {
-      message("No active serving token is available to recall.", "error");
+
+  function handleRecall() {
+    const customId = recallInput ? recallInput.value.trim() : "";
+    const targetTokenId = customId || servingTokenId || lastActionTokenId;
+    if (!targetTokenId) {
+      message("Enter a token UUID or hold/skip a token first to recall.", "error");
       return;
     }
-    action("/api/v1/tokens/" + servingTokenId + "/recall", {}, "Token recalled.");
-  });
+    action("/api/v1/tokens/" + targetTokenId + "/recall", {}, "Token recalled to WAITING.");
+  }
+
+  buttons.recall.addEventListener("click", handleRecall);
+  if (btnRecallCustom) btnRecallCustom.addEventListener("click", handleRecall);
+
   loadQueue();
   setInterval(loadQueue, CONFIG.STATUS_POLL_INTERVAL_MS);
 })();
