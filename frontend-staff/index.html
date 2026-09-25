@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2563eb">
+  <title>SmartQueue — Staff Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<header class="sticky top-0 z-10 border-b border-slate-200 bg-white">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <div>
+      <p class="text-sm font-semibold text-blue-600">SMARTQUEUE</p>
+      <h1 class="text-xl font-bold">Staff Dashboard</h1>
+      <p class="text-sm text-slate-500">General Medicine · Queue operations</p>
+    </div>
+    <a href="/patient/" class="hidden rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50 sm:block">Patient view</a>
+  </div>
+</header>
+<main class="mx-auto max-w-6xl space-y-6 px-4 py-6">
+  <div id="status-message" class="hidden rounded-xl border p-4 text-sm font-medium" role="alert" aria-live="polite"></div>
+  <section class="grid gap-6 lg:grid-cols-3">
+    <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-semibold">Digital queue</h2>
+          <p class="text-sm text-slate-500">The source of truth for token flow.</p>
+        </div>
+        <span id="queue-refresh-state" class="text-xs text-slate-500">Updating…</span>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-xl bg-slate-50 p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Currently serving</p>
+          <p id="serving-token" class="mt-2 text-5xl font-black tracking-tight text-blue-700">—</p>
+        </div>
+        <div class="rounded-xl bg-slate-50 p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Waiting patients</p>
+          <p id="waiting-count" class="mt-2 text-5xl font-black tracking-tight">0</p>
+        </div>
+      </div>
+    </article>
+    <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div>
+        <h2 class="text-lg font-semibold">Physical occupancy</h2>
+        <p class="mt-1 text-sm text-slate-500">Separate from the digital queue.</p>
+      </div>
+      <div class="mt-6 rounded-xl border border-dashed border-slate-300 p-5">
+        <p class="text-sm font-semibold text-slate-500">Hardware status</p>
+        <p class="mt-2 text-base font-medium">Deferred to the ESP32 milestone.</p>
+        <p class="mt-1 text-sm text-slate-500">Digital queue count is not physical occupancy.</p>
+      </div>
+    </article>
+  </section>
+  <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="mb-4">
+      <h2 class="text-lg font-semibold">Queue actions</h2>
+      <p class="text-sm text-slate-500">Actions are enforced by the backend queue service.</p>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <button id="btn-call-next" class="rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50">Call next</button>
+      <button id="btn-hold" class="rounded-xl bg-amber-50 px-4 py-3 font-semibold text-amber-800 hover:bg-amber-100 disabled:opacity-50">Hold serving</button>
+      <button id="btn-recall" class="rounded-xl bg-indigo-50 px-4 py-3 font-semibold text-indigo-800 hover:bg-indigo-100 disabled:opacity-50">Recall token</button>
+      <button id="btn-skip" class="rounded-xl bg-rose-50 px-4 py-3 font-semibold text-rose-800 hover:bg-rose-100 disabled:opacity-50">Skip serving</button>
+      <button id="btn-complete" class="rounded-xl bg-emerald-50 px-4 py-3 font-semibold text-emerald-800 hover:bg-emerald-100 disabled:opacity-50">Complete serving</button>
+    </div>
+  </section>
+</main>
+<script src="js/config.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
