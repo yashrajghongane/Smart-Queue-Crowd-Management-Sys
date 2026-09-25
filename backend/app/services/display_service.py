@@ -57,3 +57,53 @@ class DisplayService:
             "department_id": visit.department_id,
             "updated_at": token.updated_at,
         }
+
+    def get_queue_summary(self, queue_id: str) -> dict:
+        """Doc A §2.3 Queue Summary"""
+        from fastapi import HTTPException
+        from app.models.models import Queue
+        queue = self.db.query(Queue).filter(Queue.id == queue_id).first()
+        if not queue:
+            raise HTTPException(status_code=404, detail="Queue not found")
+
+        waiting_count = self._tokens.count_waiting(queue_id)
+        serving = self._tokens.find_serving_token(queue_id)
+
+        # Get latest update time across queue tokens, or fallback to current time
+        from app.models.models import Token, _utcnow
+        latest_token = self.db.query(Token).filter(Token.queue_id == queue_id).order_by(Token.updated_at.desc()).first()
+        updated_at = latest_token.updated_at if latest_token else _utcnow()
+
+        return {
+            "queue_id": queue.id,
+            "department_id": queue.department_id,
+            "waiting_count": waiting_count,
+            "serving_token": serving.token_number if serving else None,
+            "serving_token_id": serving.id if serving else None,
+            "updated_at": updated_at
+        }
+
+    def get_public_display(self, queue_id: str) -> dict:
+        """Doc A §2.10 Public display"""
+        from fastapi import HTTPException
+        from app.models.models import Queue
+        queue = self.db.query(Queue).filter(Queue.id == queue_id).first()
+        if not queue:
+            raise HTTPException(status_code=404, detail="Queue not found")
+
+        serving = self._tokens.find_serving_token(queue_id)
+        next_token = self._tokens.find_next_waiting(queue_id)
+        waiting_count = self._tokens.count_waiting(queue_id)
+
+        # Get latest update time across queue tokens, or fallback to current time
+        from app.models.models import Token, _utcnow
+        latest_token = self.db.query(Token).filter(Token.queue_id == queue_id).order_by(Token.updated_at.desc()).first()
+        updated_at = latest_token.updated_at if latest_token else _utcnow()
+
+        return {
+            "queue_id": queue.id,
+            "serving_token": serving.token_number if serving else None,
+            "next_token": next_token.token_number if next_token else None,
+            "waiting_count": waiting_count,
+            "updated_at": updated_at
+        }

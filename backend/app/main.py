@@ -106,3 +106,21 @@ def root():
         "health": "/health",
         "patient_app": "/patient/",
     }
+
+# ── Static files — staff frontend ──────────────────────────────────────────
+_staff_frontend_path = os.path.join(
+    os.path.dirname(__file__), "..", "..", "frontend-staff"
+)
+if os.path.isdir(_staff_frontend_path):
+    app.mount(
+        "/staff",
+        StaticFiles(directory=_staff_frontend_path, html=True),
+        name="staff-frontend",
+    )
+
+from app.api import zone
+app.include_router(
+    zone.router,
+    prefix="/api/v1/zones",
+    tags=["Zone"],
+)
