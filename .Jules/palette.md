@@ -1,0 +1,3 @@
+## 2026-09-25 - Accessibility and State Feedback Improvements
+**Learning:** Adding `role="alert"` to dynamically appearing error messages and `aria-live="polite"` to queue status updates significantly improves the experience for screen reader users by automatically announcing critical changes without requiring manual navigation. Furthermore, adding visual loading states (like a spinner and disabling the button) to actions like a manual refresh provides immediate feedback, reassuring users that the system is processing their request.
+**Action:** When implementing dynamically updated content or asynchronous actions in future frontend components, consistently evaluate the need for ARIA live regions, alert roles, and explicit loading indicators as standard practice.

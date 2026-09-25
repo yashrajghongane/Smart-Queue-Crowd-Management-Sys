@@ -31,6 +31,9 @@
   const loadingEl       = document.getElementById("loading");
   const contentEl       = document.getElementById("status-content");
   const refreshBtn      = document.getElementById("refresh-btn");
+  const refreshSpinner  = document.getElementById("refresh-spinner");
+  const refreshBtnText  = refreshBtn.querySelector("span");
+  const refreshBtnIcon  = refreshBtn.querySelector("svg:not(#refresh-spinner)");
   const registerNewBtn  = document.getElementById("register-new-btn");
 
   // ── State ───────────────────────────────────────────────────────────────────
@@ -80,6 +83,20 @@
   const TERMINAL_STATES = new Set(["COMPLETED", "SKIPPED"]);
 
   // ── Fetch and render ────────────────────────────────────────────────────────
+  function setRefreshLoading(isLoading) {
+    if (isLoading) {
+      refreshBtn.disabled = true;
+      refreshSpinner.classList.remove("hidden");
+      refreshBtnIcon.classList.add("hidden");
+      refreshBtnText.textContent = "Refreshing…";
+    } else {
+      refreshBtn.disabled = false;
+      refreshSpinner.classList.add("hidden");
+      refreshBtnIcon.classList.remove("hidden");
+      refreshBtnText.textContent = "Refresh Now";
+    }
+  }
+
   async function fetchStatus() {
     if (!visitId) {
       showError("No visit ID found. Please register again.", true);
@@ -87,6 +104,7 @@
     }
 
     clearError();
+    setRefreshLoading(true);
 
     try {
       const response = await fetch(
@@ -115,6 +133,8 @@
     } catch (err) {
       console.error("Status fetch error:", err);
       showError("Connection problem. Retrying…", false);
+    } finally {
+      setRefreshLoading(false);
     }
   }
 
