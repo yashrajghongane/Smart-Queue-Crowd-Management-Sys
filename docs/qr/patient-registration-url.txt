@@ -1,0 +1,1 @@
+https://smartqueue-api.onrender.com/patient/

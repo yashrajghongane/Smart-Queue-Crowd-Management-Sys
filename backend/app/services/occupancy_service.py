@@ -103,7 +103,7 @@ class OccupancyService:
         # 2. Lookup zone with row lock
         zone = (
             self.db.execute(
-                select(Zone).where((Zone.id == zone_id) | (Zone.id == device.zone_id)).with_for_update()
+                select(Zone).where(Zone.id == zone_id).with_for_update()
             )
             .scalar_one_or_none()
         )
