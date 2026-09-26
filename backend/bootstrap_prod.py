@@ -21,8 +21,8 @@ from app.core.security import hash_password, hash_device_credential
 
 DEPT_GM_ID    = "2a2f8a0d-7b46-4a9d-b7f2-6c5f3b9d1001"
 QUEUE_GM_ID   = "3d3f0f52-6b7a-4bb3-92cb-7f1f4d340301"
-ZONE_001_ID   = "zone-0001-0000-0000-0000-000000000001"
-DEVICE_001_ID = "devi-0001-0000-0000-0000-000000000001"
+ZONE_001_ID   = "a0000001-0000-4000-8000-000000000001"
+DEVICE_001_ID = "b0000001-0000-4000-8000-000000000001"
 
 
 def bootstrap():
@@ -31,7 +31,7 @@ def bootstrap():
 
     try:
         # 1. Department
-        dept = db.query(Department).filter(Department.name == "General Medicine").first()
+        dept = db.query(Department).filter((Department.name == "General Medicine") | (Department.id == DEPT_GM_ID)).first()
         if dept is None:
             dept = Department(
                 id=DEPT_GM_ID,
@@ -45,7 +45,7 @@ def bootstrap():
             print("[Bootstrap] Department 'General Medicine' already exists.")
 
         # 2. Queue
-        queue = db.query(Queue).filter(Queue.prefix == "GM").first()
+        queue = db.query(Queue).filter((Queue.prefix == "GM") | (Queue.id == QUEUE_GM_ID)).first()
         if queue is None:
             queue = Queue(
                 id=QUEUE_GM_ID,
@@ -61,7 +61,7 @@ def bootstrap():
             print("[Bootstrap] Queue 'GM' already exists.")
 
         # 3. Zone
-        zone = db.query(Zone).filter(Zone.id == ZONE_001_ID).first()
+        zone = db.query(Zone).filter((Zone.id == ZONE_001_ID) | (Zone.name == "General OPD Waiting Area")).first()
         if zone is None:
             zone = Zone(
                 id=ZONE_001_ID,
@@ -80,7 +80,7 @@ def bootstrap():
             print("[Bootstrap] Zone 'General OPD Waiting Area' already exists.")
 
         # 4. Device DEV-001
-        device = db.query(Device).filter(Device.device_code == "DEV-001").first()
+        device = db.query(Device).filter((Device.device_code == "DEV-001") | (Device.id == DEVICE_001_ID)).first()
         device_key = os.getenv("DEVICE_KEY")
         if device is None:
             if not device_key:
@@ -146,6 +146,27 @@ def bootstrap():
             print("[Bootstrap] Created Staff User: doctor (role: DEPARTMENT_STAFF)")
         else:
             print("[Bootstrap] Staff User 'doctor' already exists.")
+
+        # 7. Staff: Receptionist
+        recep_user = db.query(StaffUser).filter(StaffUser.username == "reception").first()
+        recep_pass = os.getenv("RECEPTION_PASSWORD") or os.getenv("STAFF_PASSWORD")
+        if recep_user is None:
+            if not recep_pass:
+                recep_pass = secrets.token_urlsafe(16)
+                generated_creds["Reception Password"] = recep_pass
+
+            recep_user = StaffUser(
+                username="reception",
+                password_hash=hash_password(recep_pass),
+                display_name="Reception Desk",
+                role="RECEPTION",
+                active=True,
+                created_at=_utcnow(),
+            )
+            db.add(recep_user)
+            print("[Bootstrap] Created Staff User: reception (role: RECEPTION)")
+        else:
+            print("[Bootstrap] Staff User 'reception' already exists.")
 
         db.commit()
         print("[Bootstrap] Production bootstrap completed successfully.")

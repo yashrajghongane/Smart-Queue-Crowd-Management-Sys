@@ -166,8 +166,8 @@ def test_device_events_endpoint_authenticated():
     unique_seq = int(uuid.uuid4().int % 10000000) + 1000
     # 1. Without credentials -> 401
     res_no_auth = client.post("/api/v1/devices/events", json={
-        "device_id": "devi-0001-0000-0000-0000-000000000001",
-        "zone_id": "zone-0001-0000-0000-0000-000000000001",
+        "device_id": "b0000001-0000-4000-8000-000000000001",
+        "zone_id": "a0000001-0000-4000-8000-000000000001",
         "sequence": unique_seq,
         "event_type": "ENTRY",
         "event_at": "2026-09-23T16:10:32.420Z",
@@ -180,8 +180,8 @@ def test_device_events_endpoint_authenticated():
         "/api/v1/devices/events",
         headers={"X-Device-Key": "wrong-secret-key"},
         json={
-            "device_id": "devi-0001-0000-0000-0000-000000000001",
-            "zone_id": "zone-0001-0000-0000-0000-000000000001",
+            "device_id": "b0000001-0000-4000-8000-000000000001",
+            "zone_id": "a0000001-0000-4000-8000-000000000001",
             "sequence": unique_seq,
             "event_type": "ENTRY",
             "event_at": "2026-09-23T16:10:32.420Z",
@@ -195,8 +195,8 @@ def test_device_events_endpoint_authenticated():
         "/api/v1/devices/events",
         headers={"X-Device-Key": "esp32-secret-key-001"},
         json={
-            "device_id": "devi-0001-0000-0000-0000-000000000001",
-            "zone_id": "zone-0001-0000-0000-0000-000000000001",
+            "device_id": "b0000001-0000-4000-8000-000000000001",
+            "zone_id": "a0000001-0000-4000-8000-000000000001",
             "sequence": unique_seq,
             "event_type": "ENTRY",
             "event_at": "2026-09-23T16:10:32.420Z",

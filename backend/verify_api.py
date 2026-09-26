@@ -258,8 +258,8 @@ unique_device_seq = random.randint(1000000, 9999999)
 
 # 20.1 Reject unauthenticated request (401)
 status, body = req("POST", "/api/v1/devices/events", {
-    "device_id": "devi-0001-0000-0000-0000-000000000001",
-    "zone_id": "zone-0001-0000-0000-0000-000000000001",
+    "device_id": "b0000001-0000-4000-8000-000000000001",
+    "zone_id": "a0000001-0000-4000-8000-000000000001",
     "sequence": unique_device_seq,
     "event_type": "ENTRY",
     "event_at": "2026-09-23T16:10:32.420Z",
@@ -270,8 +270,8 @@ check("POST /devices/events without key returns 401", status == 401, f"got {stat
 # 20.2 Authenticated ENTRY event (200)
 url_dev = BASE + "/api/v1/devices/events"
 data_dev = json.dumps({
-    "device_id": "devi-0001-0000-0000-0000-000000000001",
-    "zone_id": "zone-0001-0000-0000-0000-000000000001",
+    "device_id": "b0000001-0000-4000-8000-000000000001",
+    "zone_id": "a0000001-0000-4000-8000-000000000001",
     "sequence": unique_device_seq,
     "event_type": "ENTRY",
     "event_at": "2026-09-23T16:10:32.420Z",
@@ -307,7 +307,7 @@ check("POST /auth/login returns 200", status_login == 200, f"got {status_login}"
 token_val = body_login.get("access_token")
 
 # Read crowd status
-url_crowd = BASE + "/api/v1/zones/zone-0001-0000-0000-0000-000000000001/crowd"
+url_crowd = BASE + "/api/v1/zones/a0000001-0000-4000-8000-000000000001/crowd"
 headers_crowd = {"Accept": "application/json", "Authorization": f"Bearer {token_val}"}
 req_crowd = urllib.request.Request(url_crowd, headers=headers_crowd, method="GET")
 with urllib.request.urlopen(req_crowd) as resp_crowd:

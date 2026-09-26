@@ -29,8 +29,8 @@ from app.core.security import hash_device_credential
 
 client = TestClient(app)
 
-ZONE_ID = "zone-0001-0000-0000-0000-000000000001"
-DEVICE_ID = "devi-0001-0000-0000-0000-000000000001"
+ZONE_ID = "a0000001-0000-4000-8000-000000000001"
+DEVICE_ID = "b0000001-0000-4000-8000-000000000001"
 DEVICE_KEY = "esp32-secret-key-001"
 
 

@@ -15,9 +15,9 @@ const char* const EVENT_ENDPOINT  = "/api/v1/devices/events";
 // ── Device Identity & Security Credentials ───────────────────────────────────
 // Device UUID and provisioned secret key.
 // In production, provision via bootstrap_prod.py / environment variable.
-const char* const DEVICE_ID         = "devi-0001-0000-0000-0000-000000000001";
+const char* const DEVICE_ID         = "b0000001-0000-4000-8000-000000000001";
 const char* const DEVICE_CODE       = "DEV-001";
-const char* const ZONE_ID           = "zone-0001-0000-0000-0000-000000000001";
+const char* const ZONE_ID           = "a0000001-0000-4000-8000-000000000001";
 const char* const DEVICE_SECRET_KEY = "YOUR_DEVICE_SECRET_KEY";
 const char* const FIRMWARE_VERSION  = "0.1.0";
 
