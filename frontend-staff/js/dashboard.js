@@ -148,12 +148,30 @@
   }
 
   function setBusy(busy) {
-    if (buttons.call) buttons.call.disabled = busy;
-    if (buttons.hold) buttons.hold.disabled = busy || !servingTokenId;
-    if (buttons.skip) buttons.skip.disabled = busy || !servingTokenId;
-    if (buttons.complete) buttons.complete.disabled = busy || !servingTokenId;
-    if (buttons.recall) buttons.recall.disabled = busy;
-    if (btnRecallCustom) btnRecallCustom.disabled = busy;
+    if (buttons.call) {
+        buttons.call.disabled = busy;
+        buttons.call.title = busy ? "Processing..." : "";
+    }
+    if (buttons.hold) {
+        buttons.hold.disabled = busy || !servingTokenId;
+        buttons.hold.title = busy ? "Processing..." : (!servingTokenId ? "No active consultation to hold" : "");
+    }
+    if (buttons.skip) {
+        buttons.skip.disabled = busy || !servingTokenId;
+        buttons.skip.title = busy ? "Processing..." : (!servingTokenId ? "No active consultation to skip" : "");
+    }
+    if (buttons.complete) {
+        buttons.complete.disabled = busy || !servingTokenId;
+        buttons.complete.title = busy ? "Processing..." : (!servingTokenId ? "No active consultation to complete" : "");
+    }
+    if (buttons.recall) {
+        buttons.recall.disabled = busy;
+        buttons.recall.title = busy ? "Processing..." : "";
+    }
+    if (btnRecallCustom) {
+        btnRecallCustom.disabled = busy;
+        btnRecallCustom.title = busy ? "Processing..." : "";
+    }
   }
 
   // ── Queue Loading ──────────────────────────────────────────────────────────
