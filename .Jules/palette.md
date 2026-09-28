@@ -1,0 +1,3 @@
+## 2026-09-28 - Staff Dashboard Accessibility Forms
+**Learning:** Found multiple instances where label 'for' attributes were omitted in favour of visual proximity in the Staff Dashboard form, specifically in the login modal. Also observed icon-only buttons (`&times;`) without accessible names, and input placeholders used as the only visual context without screen reader support. This is a common pattern in rapidly built Tailwind-based forms where accessibility traits are mistakenly dropped.
+**Action:** Always ensure `for` attributes on `<label>` elements match their corresponding `id` on inputs, and icon-only buttons include `aria-label`. Use aria-labels on inputs when there is no visual text label associated with it to allow better screen-reader compatibility.

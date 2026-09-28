@@ -43,3 +43,4 @@ htmlcov/
 Thumbs.db
 ehthumbs.db
 desktop.ini
+node_modules/
